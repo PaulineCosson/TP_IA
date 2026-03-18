@@ -14,7 +14,10 @@ if not API_KEY:
     raise SystemExit("Missing OPENROUTER_API_KEY (or OPENAI_API_KEY) in .env")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
-DEFAULT_MODEL = "microsoft/wizardlm-2-8x22b:free"
+# Use an OpenRouter-supported model. The original default (microsoft/wizardlm-2-8x22b:free)
+# is not available via OpenRouter and will produce a 404 error.
+# See https://openrouter.ai/docs/ for up-to-date model names.
+DEFAULT_MODEL = "openai/gpt-5.4-mini"
 DEFAULT_TOP_K = 4
 
 
@@ -55,12 +58,12 @@ def build_prompt(question: str, contexts: list[Document]) -> str:
         [f"Source: {d.metadata.get('source', '')}\n{d.page_content}" for d in contexts]
     )
     return (
-        "Tu es un assistant expert qui répond de manière concise en utilisant uniquement les informations fournies.\n\n"
-        "Utilise les passages suivants comme contexte (n'invente rien) :\n\n"
+        "You are an expert assistant. Answer concisely using only the provided information.\n\n"
+        "Use the following passages as context (do not invent anything):\n\n"
         f"{ctx_text}\n\n"
         "Question:\n"
         f"{question}\n\n"
-        "Réponse :"
+        "Answer:"
     )
 
 
